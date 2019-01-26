@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="final在java中的用法有很多，可以修饰field，可以修饰Method，可以修饰Class，而且final在多线程环境中保证了对象状态的不变性，下面就系统的总结一下Java中final关键字的用法 修饰Variable/field 修饰primitive变量，变量一旦赋值就不再可变。 final修饰基本数据类型变量和String类型时，类似于C++的const 3种变量会被隐式的定义为fin">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中final关键字总结">
+<meta property="og:url" content="http://javaor.github.io/2017/04/17/final-in-java/index.html">
+<meta property="og:site_name" content="Javaor&#39;s Blog">
+<meta property="og:description" content="final在java中的用法有很多，可以修饰field，可以修饰Method，可以修饰Class，而且final在多线程环境中保证了对象状态的不变性，下面就系统的总结一下Java中final关键字的用法 修饰Variable/field 修饰primitive变量，变量一旦赋值就不再可变。 final修饰基本数据类型变量和String类型时，类似于C++的const 3种变量会被隐式的定义为fin">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-26T16:00:31.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中final关键字总结">
+<meta name="twitter:description" content="final在java中的用法有很多，可以修饰field，可以修饰Method，可以修饰Class，而且final在多线程环境中保证了对象状态的不变性，下面就系统的总结一下Java中final关键字的用法 修饰Variable/field 修饰primitive变量，变量一旦赋值就不再可变。 final修饰基本数据类型变量和String类型时，类似于C++的const 3种变量会被隐式的定义为fin">
+
+
+
+
+
+
+  <link rel="canonical" href="http://javaor.github.io/2017/04/17/final-in-java/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java中final关键字总结 | Javaor's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Javaor's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">赵小轩的代码小屋</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">19</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">64</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/javaor" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://javaor.github.io/2017/04/17/final-in-java/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="赵宏轩">
+      <meta itemprop="description" content="不想当架构师的程序员不是好厨子">
+      <meta itemprop="image" content="https://avatars2.githubusercontent.com/u/8613196?v=3&s=466">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Javaor's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java中final关键字总结
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-04-17 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-17T00:00:00+08:00">2017-04-17</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/17/final-in-java/#comments" itemprop="discussionUrl">
+                
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/17/final-in-java/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">9 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>final在java中的用法有很多，可以修饰field，可以修饰Method，可以修饰Class，而且final在多线程环境中保证了对象状态的不变性，下面就系统的总结一下Java中final关键字的用法</p>
+<h3 id="修饰Variable/field">修饰Variable/field</h3><ol>
+<li>修饰primitive变量，变量一旦赋值就不再可变。</li>
+<li>final修饰<code>基本数据类型变量</code>和<code>String类型</code>时，类似于C++的const</li>
+<li><p>3种变量会被隐式的定义为final：<br>3.1. 接口中的field是final的<br>3.2. Java7中出现的try with resource语句中的变量是隐式的final类型,如下面的代码，inputStream虽然未被声明为final，但是如果试图在try块里面重新对inputStream赋值的话，就会产生编译异常，不能给final变量赋值</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> (FileInputStream inputStream = <span class="keyword">new</span> FileInputStream(<span class="string">"text.txt"</span>))&#123;</span><br><span class="line">inputStream = <span class="keyword">new</span> FileInputStream(<span class="string">""</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">   e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修饰引用实例类型变量，变量被赋值后，变量指向的引用的值可以变，但是不能重新指向新的引用，即final只关心引用本身，而不关心final引用的内容。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">final</span> User user = <span class="keyword">new</span> User(<span class="string">"xuan1"</span>,<span class="number">23</span>);</span><br><span class="line">   System.out.println(user.getAge()); <span class="comment">//输出23</span></span><br><span class="line">   user.setAge(<span class="number">24</span>);</span><br><span class="line">   System.out.println(user.getAge()); <span class="comment">//输出24</span></span><br><span class="line">   user = <span class="keyword">new</span> User(<span class="string">"xuan2"</span>,<span class="number">25</span>); <span class="comment">//编译错误，提示不能赋值给final变量</span></span><br><span class="line">   System.out.println(user.getAge());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修饰实例成员变量时，必须在定义的时候初始化：直接赋值，构造器初始化，或代码块中初始化，或的意思是这三种方式只能选择一种，否则编译报错。</p>
+</li>
+<li>修饰静态成员变量时，必须在变量定义的时候初始化：直接赋值，静态代码块中赋值<br> Tips: 有一种特殊情况：<code>System.in,System.out,System.err</code> 是静态域但是没有在定义的时候或者静态代码块中初始化，而是使用了set方法来设置值。</li>
+<li><p>JDK8以前内部类访问外部类的变量时要求变量为Final类型,JDK8之后，只要求外部类为事实不可变变量，不一定要加上final</p>
+<a id="more"></a>
+<p>关于事实不可变final的定义：</p>
+<blockquote>
+<p>variable or parameter whose value is never changed after it is initialized is effectively final<br>也就是说变量被初始化之后没有改变过即使没有final，jvm也会把这个变量解释为final类型来对待。</p>
+</blockquote>
+<p>下面是官方文档的一个例子：<br>在内部类PhoneNumber中的构造器中使用外部的numberLength的时候，JDK8之前必须显示定义为final类型，否则编译器将会给出警告，而在JDK8之后并不需要显式声明为final，但是，如果变量在初始化之后被再次赋值的话，就会出现异常了，因为打破了事实不可变的条件，所以在构造器中再次给numberLength赋值为7的时候，JDK8的编译器也给出了错误提示。<br>同理，在printOriginalNumbers方法中方为外部类的变量<code>phoneNumber1</code>，<code>phoneNumber2</code>的时候JDK8以前的编译器给出错误提示。</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io.github.javaor;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by zhaohongxuan</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalClassExample</span> </span>&#123;</span><br><span class="line">	<span class="keyword">static</span> String regularExpression = <span class="string">"[^0-9]"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">validatePhoneNumber</span><span class="params">(String phoneNumber1, String phoneNumber2)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> numberLength = <span class="number">10</span>;</span><br><span class="line">		<span class="comment">// Valid in JDK 8 and later:</span></span><br><span class="line">		<span class="comment">// int numberLength = 10;</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">PhoneNumber</span> </span>&#123;</span><br><span class="line">			String formattedPhoneNumber = <span class="keyword">null</span>;</span><br><span class="line">			PhoneNumber(String phoneNumber) &#123;</span><br><span class="line"><span class="comment">//				 numberLength = 7;</span></span><br><span class="line">				String currentNumber = phoneNumber.replaceAll(regularExpression, <span class="string">""</span>);</span><br><span class="line">				<span class="keyword">if</span> (currentNumber.length() == numberLength)</span><br><span class="line">					formattedPhoneNumber = currentNumber;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">					formattedPhoneNumber = <span class="keyword">null</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="function"><span class="keyword">public</span> String <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				<span class="keyword">return</span> formattedPhoneNumber;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// Valid in JDK 8 and later:</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printOriginalNumbers</span><span class="params">()</span> </span>&#123;</span><br><span class="line">				System.out.println(<span class="string">"Original numbers are "</span>+phoneNumber1+<span class="string">" and "</span>+phoneNumber2);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		PhoneNumber myNumber1 = <span class="keyword">new</span> PhoneNumber(phoneNumber1);</span><br><span class="line">		PhoneNumber myNumber2 = <span class="keyword">new</span> PhoneNumber(phoneNumber2);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Valid in JDK 8 and later:</span></span><br><span class="line"><span class="comment">//        myNumber1.printOriginalNumbers();</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (myNumber1.getNumber() == <span class="keyword">null</span>)</span><br><span class="line">			System.out.println(<span class="string">"First number is invalid"</span>);</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			System.out.println(<span class="string">"First number is "</span> + myNumber1.getNumber());</span><br><span class="line">		<span class="keyword">if</span> (myNumber2.getNumber() == <span class="keyword">null</span>)</span><br><span class="line">			System.out.println(<span class="string">"Second number is invalid"</span>);</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			System.out.println(<span class="string">"Second number is "</span> + myNumber2.getNumber());</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> </span>&#123;</span><br><span class="line">		validatePhoneNumber(<span class="string">"123-456-7890"</span>, <span class="string">"456-7890"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="修饰Method">修饰Method</h3><p>Java语言规范中的描述如下：</p>
+<blockquote>
+<p>A method can be declared final to prevent subclasses from overriding or hiding it.<br>It is a compile-time error to attempt to override or hide a final method.<br>A private method and all methods declared immediately within a final class (§8.1.1.2) behave as if they are final, since it is impossible to override them.<br>At run time, a machine-code generator or optimizer can “inline” the body of a final method, replacing an invocation of the method with the code in its body. The inlining process must preserve the semantics of the method invocation. In particular, if the target of an instance method invocation is null, then a NullPointerException must be thrown even if the method is inlined. A Java compiler must ensure that the exception will be thrown at the correct point, so that the actual arguments to the method will be seen to have been evaluated in the correct order prior to the method invocation.</p>
+</blockquote>
+<ol>
+<li>final修饰方法可以阻止子类覆盖，如果试图覆盖则编译报错</li>
+<li><code>private</code> 方法和<code>final</code> 类的方法表现的为final方法的属性，因为无法覆盖他们。  </li>
+<li>运行时，JVM会<code>内联final方法</code>，用final方法的代码替换方法的调用，下图是一个简单示例:</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> x, y;</span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">move</span><span class="params">(<span class="keyword">int</span> dx, <span class="keyword">int</span> dy)</span> </span>&#123; x += dx; y += dy; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Point[] p = <span class="keyword">new</span> Point[<span class="number">100</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length; i++) &#123;</span><br><span class="line">            p[i] = <span class="keyword">new</span> Point();</span><br><span class="line">            p[i].move(i, p.length-<span class="number">1</span>-i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main方法里的for循环中的Point类中的<code>move方法</code>将会被内联为下面的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; p.length; i++) &#123;</span><br><span class="line">    p[i] = <span class="keyword">new</span> Point();</span><br><span class="line">    Point pi = p[i];</span><br><span class="line">    <span class="keyword">int</span> j = p.length-<span class="number">1</span>-i;</span><br><span class="line">    pi.x += i;</span><br><span class="line">    pi.y += j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Header One</th>
+<th style="text-align:left">Header Two</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Item One</td>
+<td style="text-align:left">Item Two</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>参考资料：<a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4.3.3" target="_blank" rel="noopener">http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4.3.3</a></p>
+</blockquote>
+<h3 id="修饰Class">修饰Class</h3><pre><code><span class="number">1</span>. <span class="keyword">final</span>修饰<span class="class"><span class="keyword">Class</span>可以防止类被继承</span>
+<span class="number">2</span>. <span class="keyword">final</span>和<span class="keyword">abstract</span>不能同时修饰类，因为<span class="number">2</span>者是互斥的。
+</code></pre><h3 id="final的语义">final的语义</h3><pre><code><span class="number">1.</span> Java编译器允许<span class="keyword">final</span>域缓存在寄存器中而不用重新加载它，如果是非fina域的话，将会被重新加载
+<span class="number">2.</span> <span class="keyword">final</span>可以确保初始化过程中的安全性，不可变对象时线程安全的，在多个线程中共享这些对象无需同步。
+<span class="number">3.</span> 多线程中，一个对象的<span class="keyword">final</span>域在一个线程的构造器结束的时候，在另外的线程中可见。java中有很多安全的特点都是依据<span class="built_in">String</span>类是被设计为<span class="keyword">final</span>来保证的
+</code></pre><h3 id="Java内存模型中的final_TODO">Java内存模型中的final TODO</h3><p>参考资料：<a href="http://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.5" target="_blank" rel="noopener">http://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.5</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/24/json-to-map-include-list/" rel="next" title="Java中将JSON反序列化为泛型对象">
+                <i class="fa fa-chevron-left"></i> Java中将JSON反序列化为泛型对象
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/17/intellij-external-tools/" rel="prev" title="intellij idea中使用javap等JDK工具">
+                intellij idea中使用javap等JDK工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://avatars2.githubusercontent.com/u/8613196?v=3&s=466" alt="赵宏轩">
+            
+              <p class="site-author-name" itemprop="name">赵宏轩</p>
+              <p class="site-description motion-element" itemprop="description">不想当架构师的程序员不是好厨子</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">64</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">38</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/Loving_Dou" title="Twitter &rarr; https://twitter.com/Loving_Dou" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/javaor" title="Github &rarr; https://github.com/javaor" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/hongxuanzhao" title="Weibo &rarr; http://weibo.com/hongxuanzhao" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:hxzhenu@gmail.com" title="E-Mail &rarr; mailto:hxzhenu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#修饰Variable/field"><span class="nav-number">1.</span> <span class="nav-text">修饰Variable/field</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修饰Method"><span class="nav-number">2.</span> <span class="nav-text">修饰Method</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修饰Class"><span class="nav-number">3.</span> <span class="nav-text">修饰Class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#final的语义"><span class="nav-number">4.</span> <span class="nav-text">final的语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java内存模型中的final_TODO"><span class="nav-number">5.</span> <span class="nav-text">Java内存模型中的final TODO</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">赵宏轩</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">228k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">6:20</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://javaor.disqus.com/count.js" async></script>
+  
+
+  
+    <script>
+      var disqus_config = function () {
+        this.page.url = "http://javaor.github.io/2017/04/17/final-in-java/";
+        this.page.identifier = "2017/04/17/final-in-java/";
+        this.page.title = 'Java中final关键字总结';
+        };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://javaor.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
