@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="你是否还在经历合并代码的痛苦？你是否经历过刚合并完代码，又提示合并反复多次？ 这个时候你可能需要使用git rebase了，我会通过这篇文章来告诉你一个基于rebase的高效git workflow，学习成本很低，但是学会了受益无穷。 如果不想看文章正文可以直接滑到末尾，我总结了整篇文章的重点，直接用就可以了。 为什么要用Git rebase很多公司在使用git的时候没有一套规范，自己想怎么提交就">
+<meta name="keywords" content="Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个基于Git Rebase的高效Workflow">
+<meta property="og:url" content="http://zhaohongxan.github.io/2020/12/06/better-git-workflow-with-git-rebase/index.html">
+<meta property="og:site_name" content="喷气式蜗牛">
+<meta property="og:description" content="你是否还在经历合并代码的痛苦？你是否经历过刚合并完代码，又提示合并反复多次？ 这个时候你可能需要使用git rebase了，我会通过这篇文章来告诉你一个基于rebase的高效git workflow，学习成本很低，但是学会了受益无穷。 如果不想看文章正文可以直接滑到末尾，我总结了整篇文章的重点，直接用就可以了。 为什么要用Git rebase很多公司在使用git的时候没有一套规范，自己想怎么提交就">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130160447.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161152.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130160851.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161014.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161338.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161403.png">
+<meta property="og:updated_time" content="2021-01-30T08:52:23.968Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个基于Git Rebase的高效Workflow">
+<meta name="twitter:description" content="你是否还在经历合并代码的痛苦？你是否经历过刚合并完代码，又提示合并反复多次？ 这个时候你可能需要使用git rebase了，我会通过这篇文章来告诉你一个基于rebase的高效git workflow，学习成本很低，但是学会了受益无穷。 如果不想看文章正文可以直接滑到末尾，我总结了整篇文章的重点，直接用就可以了。 为什么要用Git rebase很多公司在使用git的时候没有一套规范，自己想怎么提交就">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130160447.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://zhaohongxan.github.io/2020/12/06/better-git-workflow-with-git-rebase/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>一个基于Git Rebase的高效Workflow | 喷气式蜗牛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">喷气式蜗牛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">认识你自己</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">47</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">74</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/zhaohongxuan" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhaohongxan.github.io/2020/12/06/better-git-workflow-with-git-rebase/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="喷气式蜗牛">
+      <meta itemprop="description" content="热爱编程/摄影/跑步，马拉松爱好者">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/FullSizeRender.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="喷气式蜗牛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">一个基于Git Rebase的高效Workflow
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-12-06 15:28:29" itemprop="dateCreated datePublished" datetime="2020-12-06T15:28:29+00:00">2020-12-06</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">2.5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">4 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>你是否还在经历合并代码的痛苦？</strong>你是否经历过刚合并完代码，又提示合并反复多次？</p>
+<p>这个时候你可能需要使用git rebase了，我会通过这篇文章来告诉你一个基于rebase的高效git workflow，学习成本很低，但是学会了受益无穷。</p>
+<p>如果不想看文章正文可以直接滑到末尾，我总结了整篇文章的重点，直接用就可以了。</p>
+<h1 id="为什么要用Git_rebase">为什么要用Git rebase</h1><p>很多公司在使用git的时候没有一套规范，自己想怎么提交就怎么提，rebase和merge乱用，最后导致git log非常的混乱，commit全是各种小补丁，看起来就像狗皮膏药一样。比如下面的gitlog，能够看到代码分支纵横交错，看起来非常的费力：<br><a id="more"></a><br><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130160447.png" alt></p>
+<p>而一个整洁的git log应该是下面这样的，master是一条直线，历史的提交非常整洁。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161152.png" alt="使用rebase来协作"></p>
+<h1 id="背景介绍">背景介绍</h1><p>正常的软件开发流程是：</p>
+<p>首先你接到一个开发需求，比如说是，你就首先建立一个分支</p>
+<p>假如你在自己的dev branch中提交了5次commit，很多都是调试性的gitlog，比如增加配置、添加log，或者直接就是一个update，这些commit你都已经push到repo了，因为代码push到Dev环境才能让测试介入测试。</p>
+<p>当测试到一半的时候，突然有一个同事的feature上线了，这个时候你就需要重新更新master的代码。</p>
+<p>如果使用不当，那么在你rebase/merge master分支的时候简直就是一个灾难现场，假如你有5次提交，你需要不停的处理<strong>5次</strong>基本上相同的git 代码冲突，处理到你怀疑人生。</p>
+<h1 id="使用Git_rebase来优化整个workflow">使用Git rebase来优化整个workflow</h1><p><strong>3.1 Squash自己branch的commit</strong></p>
+<p>在和master代码进行交互之前，首先在自己的branch上使用 rebase squash自己的commit。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i [SHA] </span><br><span class="line">或者</span><br><span class="line">git rebase -i HEAD~[NUMBER OF COMMIT]</span><br></pre></td></tr></table></figure>
+<p>这两者是等价的，如果使用zsh的话可以使用，grbi来代替git rebase -i这个命令.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i HEAD~5 等价于 grbi HEAD~5</span><br></pre></td></tr></table></figure>
+<p>假如我要squash下面的5个commit到9a86d1c（当然需要根据你的代码情况来判断，我这里只是举一个例子）的提交上面。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130160851.png" alt="git log"></p>
+<p>那么我们, git rebase -i HEAD~5就会出现下面的rebase 交互界面, 仔细观察会发现这个顺序其实是和gitlog<strong>相反的</strong>，最上面的是最早的commit，最下面的最近的commit。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161014.png" alt="git rebase"></p>
+<p>我们把除了第一个的commit前面pick改成s就好了，这里的s代表squash。保存之后会弹出编辑commit message的页面，在这里面更改你的commit message，结束之后保存，</p>
+<p><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161338.png" alt="squash commit message"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/20210130161403.png" alt="rebase successful"></p>
+<p>我这里是成功了，假如有冲突的话，需要手工进行冲突解决。由于是自己的分支上进行的rebase，所以一般不会起冲突，所以用起来很方便。</p>
+<p>rebase squash完成之后，如果你之前已经push过origin的话，那么需要你执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin branchName --force</span><br></pre></td></tr></table></figure>
+<p>如果你安装了zsh，可以用ggpush -f 来强制更新你的代码到origin，当然，你也可以rebase了master之后再进行这一步。</p>
+<p><strong>3.2 从自己的branch rebase master代码</strong></p>
+<p>squash了自己的branch之后就可以rebase master代码了，方法也非常简单：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git pull  </span><br><span class="line">或者 </span><br><span class="line">git fetch origin master:master</span><br></pre></td></tr></table></figure>
+<p>这个时候一般来说不会有太多的冲突，大部分时候就是release的版本号会冲突，这个时候只需要简单处理就好了。</p>
+<p>rebase master完成之后就可以把自己的代码push 到origin了，方法同3.1。</p>
+<h1 id="总结一下">总结一下</h1><p><strong>整个git workflow是这样的：</strong></p>
+<p>一、从master最新代码 checkout 新的分支进行开发</p>
+<p>git checkout -b feature/branch_name</p>
+<p>二、中间随意进行代码提交即可，不要想着会污染git log，待所有的单元测试都完成之后，就可以使用rebase squash来合并commit，这个数量可从git log中算出来。</p>
+<p>git rebase -i [SHA] 或 git rebase -i HEAD~[合并commit的数量]，</p>
+<p>三、如果你之前push过 origin，可能需要force push（自己的分支不用担心），</p>
+<p>git push origin branchName –force或者ggpush -f（zsh）</p>
+<p>四、更新master代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git checkout master &amp;&amp; git pull  </span><br><span class="line">或者 </span><br><span class="line">git fetch origin master:master</span><br></pre></td></tr></table></figure>
+<p>五、在你的feature branch rebase master代码，然后处理冲突（<strong>这时只需要处理一次冲突，因为之前做过squash</strong>）</p>
+<p>git rebase master</p>
+<p>六、重新force push代码到remote，如果你有CI的话，那么这里就结束了，因为CI会帮你从feature到master的步骤</p>
+<p>七、如果你没有CI的话，那么需要你把feature branch <strong>merge（从feature到master用merge）</strong>到master，然后git push origin master，整个workflow就结束了。</p>
+<p>这样一套 git workflow下来，你的代码提交日志将会非常整洁，看起来一点也不凌乱，如果你学会了，记得要向同事推荐，这将大大降低协作的成本。当然也要注意由于使用了 git force push，所以使用起来要<strong>小心一点</strong>，不过只要不用在自己的分支以外就没有问题。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"># Git</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/19/what-on-my-mac/" rel="next" title="我的Mac上都有什么？">
+                <i class="fa fa-chevron-left"></i> 我的Mac上都有什么？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/01/02/zsh-git-alias/" rel="prev" title="你会使用 git zsh alias 吗？">
+                你会使用 git zsh alias 吗？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/FullSizeRender.jpg" alt="喷气式蜗牛">
+            
+              <p class="site-author-name" itemprop="name">喷气式蜗牛</p>
+              <p class="site-description motion-element" itemprop="description">热爱编程/摄影/跑步，马拉松爱好者</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">47</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/Loving_Dou" title="Twitter &rarr; https://twitter.com/Loving_Dou" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/javaor" title="Github &rarr; https://github.com/javaor" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/hongxuanzhao" title="Weibo &rarr; http://weibo.com/hongxuanzhao" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:hxzhenu@gmail.com" title="E-Mail &rarr; mailto:hxzhenu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要用Git_rebase"><span class="nav-number">1.</span> <span class="nav-text">为什么要用Git rebase</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#背景介绍"><span class="nav-number">2.</span> <span class="nav-text">背景介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用Git_rebase来优化整个workflow"><span class="nav-number">3.</span> <span class="nav-text">使用Git rebase来优化整个workflow</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结一下"><span class="nav-number">4.</span> <span class="nav-text">总结一下</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">喷气式蜗牛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">250k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">6:56</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+
+  
+
+</body>
+</html>

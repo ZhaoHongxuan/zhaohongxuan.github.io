@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/favicon.ico?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Scala吸收了收并继承了多种语言中的优秀特性，另一方面也没有抛弃Java这个强大的平台，它可以运行在 Java 虚拟机之上，能够轻松地与Java互联互通。与Java不同的是，Scala既支持面向对象的特性，又支持函数式编程，被称为是Java的替代语言，是更好的Java，下面开始学习这一强大的语言。 Scala和Java比较在Scala中  所有类型都是对象 函数是对象 支持Domain spec">
+<meta name="keywords" content="scala">
+<meta property="og:type" content="article">
+<meta property="og:title" content="函数式编程语言Scala的学习（Hello Scala）">
+<meta property="og:url" content="http://zhaohongxan.github.io/2015/12/20/learning-scala/index.html">
+<meta property="og:site_name" content="喷气式蜗牛">
+<meta property="og:description" content="Scala吸收了收并继承了多种语言中的优秀特性，另一方面也没有抛弃Java这个强大的平台，它可以运行在 Java 虚拟机之上，能够轻松地与Java互联互通。与Java不同的是，Scala既支持面向对象的特性，又支持函数式编程，被称为是Java的替代语言，是更好的Java，下面开始学习这一强大的语言。 Scala和Java比较在Scala中  所有类型都是对象 函数是对象 支持Domain spec">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-01-30T08:52:23.964Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="函数式编程语言Scala的学习（Hello Scala）">
+<meta name="twitter:description" content="Scala吸收了收并继承了多种语言中的优秀特性，另一方面也没有抛弃Java这个强大的平台，它可以运行在 Java 虚拟机之上，能够轻松地与Java互联互通。与Java不同的是，Scala既支持面向对象的特性，又支持函数式编程，被称为是Java的替代语言，是更好的Java，下面开始学习这一强大的语言。 Scala和Java比较在Scala中  所有类型都是对象 函数是对象 支持Domain spec">
+
+
+
+
+
+
+  <link rel="canonical" href="http://zhaohongxan.github.io/2015/12/20/learning-scala/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>函数式编程语言Scala的学习（Hello Scala） | 喷气式蜗牛</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">喷气式蜗牛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">认识你自己</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">47</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">23</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">74</span></a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+  
+  
+
+  
+
+  <a href="https://github.com/zhaohongxuan" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewbox="0 0 250 250" style="fill: #222; color: #fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhaohongxan.github.io/2015/12/20/learning-scala/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="喷气式蜗牛">
+      <meta itemprop="description" content="热爱编程/摄影/跑步，马拉松爱好者">
+      <meta itemprop="image" content="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/FullSizeRender.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="喷气式蜗牛">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">函数式编程语言Scala的学习（Hello Scala）
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2015-12-20 00:00:00" itemprop="dateCreated datePublished" datetime="2015-12-20T00:00:00+00:00">2015-12-20</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/scala/" itemprop="url" rel="index"><span itemprop="name">scala</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">4.1k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">7 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Scala吸收了收并继承了多种语言中的优秀特性，另一方面也没有抛弃Java这个强大的平台，它可以运行在 Java 虚拟机之上，能够轻松地与Java互联互通。与Java不同的是，<br>Scala既支持面向对象的特性，又支持函数式编程，被称为是Java的替代语言，是更好的Java，下面开始学习这一强大的语言。</p>
+<h2 id="Scala和Java比较">Scala和Java比较</h2><p>在Scala中</p>
+<ol>
+<li>所有类型都是对象</li>
+<li>函数是对象</li>
+<li>支持Domain specific language (DSL)领域特定语言 </li>
+<li>特质(Trait)</li>
+<li>闭包(Closure)，嵌套函数</li>
+<li>Erlang支持的并发设计</li>
+<li>类型推导</li>
+</ol>
+<h2 id="基础语法">基础语法</h2><h3 id="表达式">表达式</h3><pre><code>scala&gt; <span class="number">1</span> + <span class="number">1</span>
+res0: Int = <span class="number">2</span>
+</code></pre><p><code>res0</code>是解释器自动创建的变量名称，指代表达式计算的结果，是Int类型的，值为2。在scala几乎一切都是表达式。</p>
+<h3 id="变量和值">变量和值</h3><p>可以将表达式赋给一个或者不变量（val）–值或者变量（var）</p>
+<pre><code>scala&gt; val two = <span class="number">1</span> + <span class="number">1</span>
+two: Int = <span class="number">2</span>
+</code></pre><p>如果需要以后修改这个名称和结果的绑定，需要使用var（变量），大部分的情况下用val的情况居多。</p>
+<pre><code>scala&gt; <span class="tag">var</span> name = <span class="string">"zhaohongxuan"</span>
+name: java<span class="class">.lang</span><span class="class">.String</span> = zhaohongxuan
+
+scala&gt; name = <span class="string">"zhaoxiaoxuan"</span>
+name: java<span class="class">.lang</span><span class="class">.String</span> = zhaoxiaoxuan
+</code></pre><a id="more"></a>
+<h3 id="函数">函数</h3><p>使用<code>def</code>关键字来创建函数</p>
+<pre><code>scala&gt; <span class="function"><span class="keyword">def</span> <span class="title">addOne</span><span class="params">(m: Int)</span>:</span> Int = m + <span class="number">1</span>
+addOne: (m: Int)Int
+</code></pre><p>调用函数：</p>
+<pre><code>scala&gt; <span class="variable"><span class="keyword">val</span> three</span> = addOne(<span class="number">2</span>)
+three: <span class="typename">Int</span> = <span class="number">3</span>
+</code></pre><p>在scala中，需要为函数参数制定类型的签名。但是，如果函数不带参数，括号可以省略。</p>
+<pre><code>scala&gt; def <span class="function"><span class="title">three</span><span class="params">()</span></span> = <span class="number">1</span> + <span class="number">2</span>
+three: ()Int
+
+scala&gt; <span class="function"><span class="title">three</span><span class="params">()</span></span>
+res2: Int = <span class="number">3</span>
+
+scala&gt; three
+res3: Int = <span class="number">3</span>
+</code></pre><h4 id="匿名函数">匿名函数</h4><p>创建匿名函数</p>
+<pre><code>scala&gt; (x: <span class="keyword">Int</span>) =&gt; x + <span class="number">1</span>
+res2: (<span class="keyword">Int</span>) =&gt; <span class="keyword">Int</span> = &lt;function1&gt;
+</code></pre><p>这个函数的作用是给名为x的变量加1.</p>
+<pre><code>scala&gt; <span class="function"><span class="title">res2</span><span class="params">(<span class="number">1</span>)</span></span>
+res3: Int = <span class="number">2</span>
+</code></pre><p>也可以传递匿名函数</p>
+<pre><code>scala&gt; val addOne = <span class="function"><span class="params">(x: Int)</span> =&gt;</span> x + <span class="number">1</span>
+<span class="attribute">addOne</span>: <span class="function"><span class="params">(Int)</span> =&gt;</span> Int = &lt;function1&gt;
+
+scala&gt; addOne(<span class="number">1</span>)
+<span class="attribute">res4</span>: Int = <span class="number">2</span>
+</code></pre><p>如果函数中表达式很多，可以用花括号{}来格式化代码、</p>
+<pre><code>scala&gt; { i: <span class="keyword">Int</span> =&gt;
+    println(<span class="string">"hello world"</span>)
+    i * <span class="number">2</span>
+}
+res0: (<span class="keyword">Int</span>) =&gt; <span class="keyword">Int</span> = &lt;function1&gt;
+</code></pre><h4 id="部分应用（Partial_application）">部分应用（Partial application）</h4><p>可以使用下划线<code>_</code>部分应用一个函数，结果是得到另一个函数。</p>
+<p>定义一个add函数</p>
+<pre><code><span class="keyword">scala</span>&gt; def add(<span class="keyword">m</span>: Int, <span class="keyword">n</span>: Int) = <span class="keyword">m</span> + <span class="keyword">n</span>
+add: (<span class="keyword">m</span>: Int,<span class="keyword">n</span>: Int)Int
+</code></pre><p>将add函数部分应用得到一个新的匿名函数</p>
+<pre><code>scala&gt; <span class="variable"><span class="keyword">val</span> add2</span> = add(<span class="number">2</span>, _:<span class="typename">Int</span>)
+add2: (<span class="typename">Int</span>) =&gt; <span class="typename">Int</span> = <span class="type">&lt;function1&gt;</span>
+
+scala&gt; add2(<span class="number">3</span>)
+res50: <span class="typename">Int</span> = <span class="number">5</span>
+</code></pre><h4 id="可变长度参数">可变长度参数</h4><p>这是一种特殊的语法，可以向方法传入任意多个同类型的参数。比如给传入的参数的首字母进行大写的操作。</p>
+<pre><code>def capitalizeAll(args: String*) = {
+  args.<span class="keyword">map</span> { <span class="string">arg =&gt;</span>
+    arg.capitalize
+  }
+}
+
+scala&gt; capitalizeAll(<span class="string">"zhaoxiaoxuan"</span>, <span class="string">"douxiaonna"</span>)
+res2: Se<span class="string">q[String]</span> = ArrayBuffer(Zhaoxiaoxuan, Douxiaonna)
+</code></pre><h2 id="类、继承与特质">类、继承与特质</h2><h3 id="类">类</h3><pre><code>scala&gt; <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span> </span>{
+     |   <span class="variable"><span class="keyword">val</span> brand</span>: String = <span class="string">"HP"</span>
+     |   def add(m: <span class="typename">Int</span>, n: <span class="typename">Int</span>): <span class="typename">Int</span> = m + n
+     | }
+defined <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span></span>
+
+scala&gt; <span class="variable"><span class="keyword">val</span> calc</span> = new Calculator
+calc: Calculator = Calculator@e75a11
+
+scala&gt; calc.add(<span class="number">1</span>, <span class="number">2</span>)
+res1: <span class="typename">Int</span> = <span class="number">3</span>
+
+scala&gt; calc.brand
+res2: String = <span class="string">"HP"</span>
+</code></pre><p>这个计算器类展示了在类中使用<code>def</code>定义方法，和使用val定义字段。其中<code>方法</code>就是可以可以访问类状态的<code>函数</code>。</p>
+<h3 id="构造函数">构造函数</h3><p>构造函数不是特殊的方法，他们是除了类的方法定义之外的代码。</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Calculator</span></span>(brand: String) {
+  <span class="comment">//构造函数</span>
+  <span class="variable"><span class="keyword">val</span> color</span>: String = <span class="keyword">if</span> (brand == <span class="string">"TI"</span>) {
+    <span class="string">"blue"</span>
+  } <span class="keyword">else</span> <span class="keyword">if</span> (brand == <span class="string">"HP"</span>) {
+    <span class="string">"black"</span>
+  } <span class="keyword">else</span> {
+    <span class="string">"white"</span>
+  }
+  <span class="comment">// An instance method.</span>
+  def add(m: <span class="typename">Int</span>, n: <span class="typename">Int</span>): <span class="typename">Int</span> = m + n
+}
+</code></pre><p>使用构造函数来构造一个实例：</p>
+<pre><code>scala&gt; val calc = new <span class="function"><span class="title">Calculator</span><span class="params">(<span class="string">"HP"</span>)</span></span>
+calc: Calculator = Calculator@<span class="number">1</span>e64cc4d
+
+scala&gt; calc<span class="class">.color</span>
+res0: String = black
+</code></pre><p>在上面的例子中，颜色的值就是绑定在一个if/else表达式上的。Scala是高度面向表达式的：大多数东西都是表达式而非指令。</p>
+<h3 id="继承">继承</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span>(<span class="params">xc: <span class="type">Int</span>, yc: <span class="type">Int</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> x: <span class="type">Int</span> = xc</span><br><span class="line">  <span class="keyword">val</span> y: <span class="type">Int</span> = yc</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">move</span></span>(dx: <span class="type">Int</span>, dy: <span class="type">Int</span>): <span class="type">Point</span> =</span><br><span class="line">    <span class="keyword">new</span> <span class="type">Point</span>(x + dx, y + dy)</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ColorPoint</span>(<span class="params">u: <span class="type">Int</span>, v: <span class="type">Int</span>, c: <span class="type">String</span></span>) <span class="keyword">extends</span> <span class="title">Point</span>(<span class="params">u, v</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> color: <span class="type">String</span> = c</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">compareWith</span></span>(pt: <span class="type">ColorPoint</span>): <span class="type">Boolean</span> =</span><br><span class="line">    (pt.x == x) &amp;&amp; (pt.y == y) &amp;&amp; (pt.color == color)</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">move</span></span>(dx: <span class="type">Int</span>, dy: <span class="type">Int</span>): <span class="type">ColorPoint</span> =</span><br><span class="line">    <span class="keyword">new</span> <span class="type">ColorPoint</span>(x + dy, y + dy, color)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ColorPoint</code>继承了<code>Point</code>中所有的成员，包括<code>x,y</code>包括<code>move</code>方法。</p>
+<p>子类<code>ColorPoint</code>增加了一个新的方法<code>compareWith</code>。<br>Scala允许对成员定义进行覆盖（Override），在这个例子中，我们在子类中用move方法<code>覆盖</code>了的父类的<code>move</code>方法,当然在子类中可以使用<code>super</code>关键字来调用父类的<code>move</code>方法。</p>
+<h3 id="抽象类">抽象类</h3><p>定义一个抽象类，它定义了一些方法但没有实现它们。取而代之是由扩展抽象类的子类定义这些方法。抽象类不能创建实例。</p>
+<pre><code>scala&gt; <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Shape</span> {</span>
+     |   <span class="function"><span class="keyword">def</span> <span class="title">getArea</span>(</span>):<span class="type">Int</span>    <span class="comment">// subclass should define this</span>
+     | }
+defined <span class="class"><span class="keyword">class</span> <span class="title">Shape</span>
+</span>
+scala&gt; <span class="class"><span class="keyword">class</span> <span class="title">Circle</span>(</span>r: <span class="type">Int</span>) <span class="keyword">extends</span> <span class="type">Shape</span> {
+     |   <span class="function"><span class="keyword">def</span> <span class="title">getArea</span>(</span>):<span class="type">Int</span> = { r * r * <span class="number">3</span> }
+     | }
+defined <span class="class"><span class="keyword">class</span> <span class="title">Circle</span>
+</span>
+scala&gt; <span class="keyword">val</span> s = <span class="keyword">new</span> <span class="type">Shape</span>
+&lt;console&gt;:<span class="number">8</span>: error: <span class="class"><span class="keyword">class</span> <span class="title">Shape</span> <span class="title">is</span> <span class="title">abstract</span>;</span> cannot be instantiated
+       <span class="keyword">val</span> s = <span class="keyword">new</span> <span class="type">Shape</span>
+           ^
+scala&gt; <span class="keyword">val</span> c = <span class="keyword">new</span> <span class="type">Circle</span>(<span class="number">2</span>)
+c: <span class="type">Circle</span> = <span class="type">Circle</span>@<span class="number">65</span>c0035b
+</code></pre><h3 id="特质">特质</h3><p>特质是一些字段和行为的集合，可以扩展或者混入（Mixin）你的类中。</p>
+<pre><code><span class="class"><span class="keyword">trait</span> <span class="title">Car</span> {</span>
+  <span class="keyword">val</span> brand: <span class="type">String</span>
+}
+
+<span class="class"><span class="keyword">trait</span> <span class="title">Shiny</span> {</span>
+  <span class="keyword">val</span> shineRefraction: <span class="type">Int</span>
+}
+<span class="class"><span class="keyword">class</span> <span class="title">BMW</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Car</span> {</span>
+  <span class="keyword">val</span> brand = <span class="string">"BMW"</span>
+}
+</code></pre><p>通过<code>with</code>关键字，一个类可以扩展多个特质：</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">BMW</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Car</span> <span class="keyword"><span class="keyword">with</span></span> <span class="title">Shiny</span> {</span>
+  <span class="keyword">val</span> brand = <span class="string">"BMW"</span>
+  <span class="keyword">val</span> shineRefraction = <span class="number">12</span>
+}
+</code></pre>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/scala/" rel="tag"># scala</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/29/spring-boot-restful/" rel="next" title="使用Spring boot 创建RestFul服务">
+                <i class="fa fa-chevron-left"></i> 使用Spring boot 创建RestFul服务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/25/quicksort-in-scala/" rel="prev" title="使用Scala实现快速排序">
+                使用Scala实现快速排序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://cdn.jsdelivr.net/gh/zhaohongxuan/picgo@master/FullSizeRender.jpg" alt="喷气式蜗牛">
+            
+              <p class="site-author-name" itemprop="name">喷气式蜗牛</p>
+              <p class="site-description motion-element" itemprop="description">热爱编程/摄影/跑步，马拉松爱好者</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">47</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/Loving_Dou" title="Twitter &rarr; https://twitter.com/Loving_Dou" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/javaor" title="Github &rarr; https://github.com/javaor" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="http://weibo.com/hongxuanzhao" title="Weibo &rarr; http://weibo.com/hongxuanzhao" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i></a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <a href="mailto:hxzhenu@gmail.com" title="E-Mail &rarr; mailto:hxzhenu@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Scala和Java比较"><span class="nav-number">1.</span> <span class="nav-text">Scala和Java比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础语法"><span class="nav-number">2.</span> <span class="nav-text">基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式"><span class="nav-number">2.1.</span> <span class="nav-text">表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量和值"><span class="nav-number">2.2.</span> <span class="nav-text">变量和值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数"><span class="nav-number">2.3.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#匿名函数"><span class="nav-number">2.3.1.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分应用（Partial_application）"><span class="nav-number">2.3.2.</span> <span class="nav-text">部分应用（Partial application）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可变长度参数"><span class="nav-number">2.3.3.</span> <span class="nav-text">可变长度参数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类、继承与特质"><span class="nav-number">3.</span> <span class="nav-text">类、继承与特质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类"><span class="nav-number">3.1.</span> <span class="nav-text">类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构造函数"><span class="nav-number">3.2.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#继承"><span class="nav-number">3.3.</span> <span class="nav-text">继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象类"><span class="nav-number">3.4.</span> <span class="nav-text">抽象类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特质"><span class="nav-number">3.5.</span> <span class="nav-text">特质</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">喷气式蜗牛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="站点总字数">250k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="站点阅读时长">6:56</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <script src="/lib/bookmark/bookmark.min.js?v=1.0"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+
+  
+
+</body>
+</html>
